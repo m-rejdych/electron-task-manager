@@ -1,9 +1,12 @@
 import React from 'react';
+import './index.css';
+
+import Board from './components/Board';
 
 const App: React.FC = () => {
   console.log('Hello!');
 
-  return <div>Hello world!</div>;
+  return <Board />;
 }
 
 export default App;
