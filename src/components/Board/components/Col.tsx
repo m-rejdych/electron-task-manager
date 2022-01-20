@@ -21,25 +21,33 @@ const Col: React.FC<Props> = ({ colName, items, onUpdate }) => {
     (columns: Columns): Columns => {
       const itemColName = e.dataTransfer.getData('colName') as keyof Columns;
       const itemId = e.dataTransfer.getData('id');
+      let isSameColumn = false;
 
       if (columns[colName].some(({ id }) => id === itemId)) {
-        return columns;
+        if (prevItemIndex || prevItemIndex === 0) prevItemIndex--;
+        isSameColumn = true;
       }
 
       const item = columns[itemColName].find(({ id }) => id === itemId);
       if (!item) return columns;
 
+      const currentColItems = isSameColumn
+        ? columns[colName].filter(({ id }) => id !== itemId)
+        : columns[colName];
+
       return {
         ...columns,
-        [itemColName]: columns[itemColName].filter(({ id }) => id !== itemId),
+        ...(!isSameColumn && {
+          [itemColName]: columns[itemColName].filter(({ id }) => id !== itemId),
+        }),
         [colName]:
           prevItemIndex || prevItemIndex === 0
             ? [
-                ...columns[colName].slice(0, prevItemIndex + 1),
+                ...currentColItems.slice(0, prevItemIndex + 1),
                 item,
-                ...columns[colName].slice(prevItemIndex + 1),
+                ...currentColItems.slice(prevItemIndex + 1),
               ]
-            : [...columns[colName], item],
+            : [...currentColItems, item],
       };
     };
 
