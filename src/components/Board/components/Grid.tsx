@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import GridCol from './GridCol';
-
-const ROW_COUNT = 5;
-const COL_COUNT = 3;
+import type { Columns } from '../types/gridTypes';
 
 const Grid: React.FC = () => {
+  const [columns, setColumns] = useState<Columns>({
+    notStarted: [
+      { id: 'id-1', name: 'Item 1' },
+      { id: 'id-4', name: 'Item 4' },
+    ],
+    doing: [
+      { id: 'id-2', name: 'Item 2' },
+      { id: 'id-5', name: 'Item 5' },
+    ],
+    done: [
+      { id: 'id-3', name: 'Item 3' },
+      { id: 'id-6', name: 'Item 6' },
+    ],
+  });
+
   return (
     <div className="flex">
-      {Array.from({ length: COL_COUNT }, (_, i) => (
-        <GridCol key={`grid-col-${i}`} rowCount={ROW_COUNT} colIndex={i} />
+      {Object.entries(columns).map(([name, items]) => (
+        <GridCol
+          key={`col-${name}`}
+          colName={name as keyof Columns}
+          items={items}
+          onUpdate={setColumns}
+        />
       ))}
     </div>
   );
