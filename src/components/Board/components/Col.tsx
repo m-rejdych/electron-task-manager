@@ -1,26 +1,23 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
-import type { Item, Columns } from '../types/gridTypes';
+import type ItemType from '../types/Item';
+import type Columns from '../types/Columns';
+import Item from './Item';
 
 interface Props {
   colName: keyof Columns;
-  items: Item[];
+  items: ItemType[];
   onUpdate: Dispatch<SetStateAction<Columns>>;
 }
 
-const GridCol: React.FC<Props> = ({ colName, items, onUpdate }) => {
-  const handleDragStart = (e: React.DragEvent, id: string): void => {
-    e.dataTransfer.setData('id', id);
-    e.dataTransfer.setData('colName', colName);
-  };
-
+const Col: React.FC<Props> = ({ colName, items, onUpdate }) => {
   const handleDragOver = (e: React.DragEvent): void => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
   const handleUpdate =
-    (e: React.DragEvent) =>
+    (e: React.DragEvent, prevItemIndex?: number) =>
     (columns: Columns): Columns => {
       const itemColName = e.dataTransfer.getData('colName') as keyof Columns;
       const itemId = e.dataTransfer.getData('id');
@@ -30,38 +27,45 @@ const GridCol: React.FC<Props> = ({ colName, items, onUpdate }) => {
       }
 
       const item = columns[itemColName].find(({ id }) => id === itemId);
-      console.log(itemColName, itemId, item);
       if (!item) return columns;
 
       return {
         ...columns,
         [itemColName]: columns[itemColName].filter(({ id }) => id !== itemId),
-        [colName]: [...columns[colName], item],
+        [colName]:
+          prevItemIndex || prevItemIndex === 0
+            ? [
+                ...columns[colName].slice(0, prevItemIndex + 1),
+                item,
+                ...columns[colName].slice(prevItemIndex + 1),
+              ]
+            : [...columns[colName], item],
       };
     };
 
-  const handleDrop = (e: React.DragEvent): void => {
-    onUpdate(handleUpdate(e));
+  const handleDrop = (e: React.DragEvent, prevItemIndex?: number): void => {
+    e.stopPropagation();
+
+    onUpdate(handleUpdate(e, prevItemIndex));
   };
 
   return (
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="flex-1 border border-r-black last:border-r-0"
+      className="flex-1 border-r border-r-gray-400 last:border-r-0 h-full"
     >
-      {items.map(({ name, id }, i) => (
-        <div
-          draggable
-          onDragStart={(e) => handleDragStart(e, id)}
+      {items.map((item, i) => (
+        <Item
+          {...item}
           key={`grid-col-${colName}-item-${i}`}
-          className="border border-b-black last:border-b-0 h-20"
-        >
-          {name}
-        </div>
+          index={i}
+          colName={colName}
+          onDrop={handleDrop}
+        />
       ))}
     </div>
   );
 };
 
-export default GridCol;
+export default Col;
