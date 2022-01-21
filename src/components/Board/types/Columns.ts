@@ -1,7 +1,7 @@
-import type Item from './Item';
+import type ItemType from './Item';
 
 export default interface Columns {
-  notStarted: Item[];
-  doing: Item[];
-  done: Item[];
+  notStarted: ItemType[];
+  doing: ItemType[];
+  done: ItemType[];
 }

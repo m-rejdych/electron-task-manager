@@ -8,13 +8,29 @@ module.exports = {
     publicPath: 'auto',
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
   },
   module: {
     rules: [
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader', 'postcss-loader'],
+        exclude: /\.module\.css$/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+        ],
+        include: /\.module\.css$/,
       },
       {
         test: /\.jsx?$/,

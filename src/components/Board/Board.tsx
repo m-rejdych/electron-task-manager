@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import Col from './components/Col';
 import type Columns from './types/Columns';
+import type DragTarget from './types/DragTarget';
 
 const Board: React.FC = () => {
   const [columns, setColumns] = useState<Columns>({
@@ -18,6 +19,7 @@ const Board: React.FC = () => {
       { id: 'id-6', name: 'Item 6' },
     ],
   });
+  const [dragTarget, setDragTarget] = useState<null | DragTarget>(null);
 
   return (
     <div className="flex flex-1">
@@ -27,6 +29,8 @@ const Board: React.FC = () => {
           colName={name as keyof Columns}
           items={items}
           onUpdate={setColumns}
+          dragTarget={dragTarget}
+          onDragTargetUpdate={setDragTarget}
         />
       ))}
     </div>

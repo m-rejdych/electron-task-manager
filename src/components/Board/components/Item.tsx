@@ -1,33 +1,68 @@
-import React, { useRef } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 
 import type Columns from '../types/Columns';
 import type ItemType from '../types/Item';
+import type DragTarget from '../types/DragTarget';
+import classes from '../styles.module';
+import { extractOffsets, checkIsAboveCursor } from '../util/positionCheckers';
 
 interface Props extends ItemType {
   index: number;
   colName: keyof Columns;
-  onDrop: (e: React.DragEvent, prevItemIndex?: number) => void;
+  dragTarget: DragTarget | null;
+  onDragTargetUpdate: Dispatch<SetStateAction<DragTarget | null>>;
 }
 
-const Item: React.FC<Props> = ({ index, colName, name, id, onDrop }) => {
+const Item: React.FC<Props> = ({
+  index,
+  colName,
+  name,
+  id,
+  dragTarget,
+  onDragTargetUpdate,
+}) => {
+  const [isDragItem, setIsDragItem] = useState(false);
+  const [isDragTargetBelow, setIsDragTargetBelow] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const listener = (e: MouseEvent): void => {
+      if (!ref.current || !dragTarget || isDragItem) return;
+
+      setIsDragTargetBelow(checkIsAboveCursor(e, ref));
+    };
+
+    if (dragTarget) {
+      window.addEventListener('drag', listener);
+    } else {
+      setIsDragTargetBelow(false);
+    }
+
+    return () => {
+      window.removeEventListener('drag', listener);
+    };
+  }, [dragTarget]);
 
   const handleDragStart = (e: React.DragEvent, id: string): void => {
     e.dataTransfer.setData('id', id);
     e.dataTransfer.setData('colName', colName);
+    setIsDragItem(true);
   };
 
-  const handleDragOver = (e: React.DragEvent): void => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+  const handleDragEnd = (): void => {
+    setIsDragItem(false);
   };
 
-  const handleDrop = (e: React.DragEvent): void => {
-    const isAbove =
-      !ref.current ||
-      e.clientY >= ref.current.offsetTop + ref.current.offsetHeight / 2;
-
-    onDrop(e, isAbove ? index : index - 1);
+  const handleDragEnter = (): void => {
+    if (isDragItem) return;
+    if (!ref.current) return;
+    onDragTargetUpdate({ index, offsets: extractOffsets(ref)! });
   };
 
   return (
@@ -35,9 +70,12 @@ const Item: React.FC<Props> = ({ index, colName, name, id, onDrop }) => {
       draggable
       ref={ref}
       onDragStart={(e) => handleDragStart(e, id)}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      className="border border-gray-400 rounded-lg h-20 m-4 shadow shadow-black bg-slate-900 p-2"
+      onDragEnd={handleDragEnd}
+      onDragEnter={handleDragEnter}
+      className={`border border-gray-400 rounded-lg h-20 m-4 shadow shadow-black bg-slate-900 p-2 cursor-move cpu ${
+        dragTarget ? 'transition-transform' : ''
+      } ${isDragItem ? classes.hide : ''} 
+      ${isDragTargetBelow ? 'translate-y-12' : ''}`}
     >
       {name}
     </div>
