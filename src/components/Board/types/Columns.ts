@@ -1,7 +1,7 @@
 import type ItemType from './Item';
 
-export default interface Columns {
-  notStarted: ItemType[];
-  doing: ItemType[];
-  done: ItemType[];
-}
+export type ColNames = 'notStarted' | 'doing' | 'done';
+
+type Columns = Record<ColNames, ItemType[]>;
+
+export default Columns;

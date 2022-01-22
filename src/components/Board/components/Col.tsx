@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 
 import { checkIsInArea } from '../util/positionCheckers';
 import type ItemType from '../types/Item';
@@ -7,6 +7,7 @@ import type DragTarget from '../types/DragTarget';
 import type DragItem from '../types/DragItem';
 import RippleEffect from '../../RippleEffect';
 import Item from './Item';
+import NewItemInput from './NewItemInput';
 
 const getIndex = (
   e: React.DragEvent,
@@ -41,6 +42,8 @@ const Col: React.FC<Props> = ({
   onDragTargetUpdate,
   onDragItemUpdate,
 }) => {
+  const [isAdding, setIsAdding] = useState(false);
+
   const handleDragOver = (e: React.DragEvent): void => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -93,6 +96,18 @@ const Col: React.FC<Props> = ({
     onDragItemUpdate(null);
   };
 
+  const handleCraete = (value: string): void => {
+    if (!value.trim()) return;
+
+    onUpdate((prev) => ({
+      ...prev,
+      [colName]: [
+        ...prev[colName],
+        { id: Math.random().toString(), name: value },
+      ],
+    }));
+  };
+
   return (
     <div
       onDragOver={handleDragOver}
@@ -111,11 +126,23 @@ const Col: React.FC<Props> = ({
           onDragItemUpdate={onDragItemUpdate}
         />
       ))}
-      <RippleEffect>
-        <button className="rounded-md bg-gray-100 bg-opacity-10 mx-4 my-2 py-1 text-3xl text-gray-400 shadow hover:bg-opacity-20">
-          +
-        </button>
-      </RippleEffect>
+      <div className="mx-4 my-2">
+        {!isAdding ? (
+          <RippleEffect>
+            <button
+              className="w-full rounded-md bg-gray-100 bg-opacity-10 py-1 text-3xl text-gray-400 shadow hover:bg-opacity-20"
+              onClick={() => setIsAdding(true)}
+            >
+              +
+            </button>
+          </RippleEffect>
+        ) : (
+          <NewItemInput
+            onBlur={() => setIsAdding(false)}
+            onCreate={handleCraete}
+          />
+        )}
+      </div>
     </div>
   );
 };
