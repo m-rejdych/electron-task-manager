@@ -5,6 +5,7 @@ import type ItemType from '../types/Item';
 import type Columns from '../types/Columns';
 import type DragTarget from '../types/DragTarget';
 import type DragItem from '../types/DragItem';
+import RippleEffect from '../../RippleEffect';
 import Item from './Item';
 
 const getIndex = (
@@ -96,7 +97,7 @@ const Col: React.FC<Props> = ({
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="flex-1 border-r border-r-gray-400 last:border-r-0 h-full"
+      className="flex-1 flex flex-col border-r border-r-gray-400 last:border-r-0 h-full"
     >
       {items.map((item, i) => (
         <Item
@@ -110,6 +111,11 @@ const Col: React.FC<Props> = ({
           onDragItemUpdate={onDragItemUpdate}
         />
       ))}
+      <RippleEffect>
+        <button className="rounded-md bg-gray-100 bg-opacity-10 mx-4 my-2 py-1 text-3xl text-gray-400 shadow hover:bg-opacity-20">
+          +
+        </button>
+      </RippleEffect>
     </div>
   );
 };
