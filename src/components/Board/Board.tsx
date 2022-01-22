@@ -24,7 +24,7 @@ const Board: React.FC = () => {
   const [dragItem, setDragItem] = useState<null | DragItem>(null);
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 h-[calc(100vh-2rem)]">
       {Object.entries(columns).map(([name, items]) => (
         <Col
           key={`col-${name}`}

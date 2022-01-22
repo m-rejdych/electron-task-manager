@@ -112,7 +112,7 @@ const Col: React.FC<Props> = ({
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="flex-1 flex flex-col border-r border-r-gray-400 last:border-r-0 h-full"
+      className="flex-1 flex flex-col border-r border-r-gray-400 last:border-r-0 h-full overflow-hidden"
     >
       {items.map((item, i) => (
         <Item

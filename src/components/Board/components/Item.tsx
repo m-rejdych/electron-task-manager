@@ -93,7 +93,7 @@ const Item: React.FC<Props> = ({
       ref={ref}
       onDragStart={(e) => handleDragStart(e, id)}
       onDragEnter={handleDragEnter}
-      className={`border border-gray-400 rounded-lg h-20 m-2 shadow shadow-black bg-slate-900 p-2 cursor-move cpu${
+      className={`border border-gray-400 rounded-lg m-2 shadow shadow-black bg-slate-900 p-2 cursor-move break-words cpu${
         dragTarget ? ' transition-transform' : ''
       }${isDragItem ? ` ${classes.hide}` : ''}
       ${isDragTargetBelow ? ' translate-y-12' : ''} ${
