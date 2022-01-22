@@ -1,8 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
+import { checkIsInArea } from '../util/positionCheckers';
 import type ItemType from '../types/Item';
 import type Columns from '../types/Columns';
 import type DragTarget from '../types/DragTarget';
+import type DragItem from '../types/DragItem';
 import Item from './Item';
 
 const getIndex = (
@@ -14,7 +16,9 @@ const getIndex = (
   const { offsets, index } = target;
   const { offsetTop, offsetHeight } = offsets;
 
-  return e.clientY >= offsetTop + offsetHeight / 2 ? index : index - 1;
+  return e.clientY >= (offsetTop + offsetHeight / 2 || !index)
+    ? index
+    : index - 1;
 };
 
 interface Props {
@@ -23,6 +27,8 @@ interface Props {
   onUpdate: Dispatch<SetStateAction<Columns>>;
   dragTarget: DragTarget | null;
   onDragTargetUpdate: Dispatch<SetStateAction<DragTarget | null>>;
+  dragItem: DragItem | null;
+  onDragItemUpdate: Dispatch<SetStateAction<DragItem | null>>;
 }
 
 const Col: React.FC<Props> = ({
@@ -30,7 +36,9 @@ const Col: React.FC<Props> = ({
   items,
   onUpdate,
   dragTarget,
+  dragItem,
   onDragTargetUpdate,
+  onDragItemUpdate,
 }) => {
   const handleDragOver = (e: React.DragEvent): void => {
     e.preventDefault();
@@ -45,13 +53,18 @@ const Col: React.FC<Props> = ({
       let isSameColumn = false;
       let index = getIndex(e, dragTarget);
 
-      if (columns[colName].some(({ id }) => id === itemId)) {
-        if (index || index === 0) index--;
-        isSameColumn = true;
-      }
+      const itemIndex = columns[itemColName].findIndex(
+        ({ id }) => itemId === id,
+      );
+      if (itemIndex === -1 || checkIsInArea(e, dragItem!.offsets))
+        return columns;
 
-      const item = columns[itemColName].find(({ id }) => id === itemId);
-      if (!item) return columns;
+      const item = columns[itemColName][itemIndex];
+
+      if (columns[colName].some(({ id }) => id === itemId)) {
+        isSameColumn = true;
+        if (index && index > itemIndex) index--;
+      }
 
       const currentColItems = isSameColumn
         ? columns[colName].filter(({ id }) => id !== itemId)
@@ -76,6 +89,7 @@ const Col: React.FC<Props> = ({
   const handleDrop = (e: React.DragEvent): void => {
     onUpdate(handleUpdate(e));
     onDragTargetUpdate(null);
+    onDragItemUpdate(null);
   };
 
   return (
@@ -91,7 +105,9 @@ const Col: React.FC<Props> = ({
           index={i}
           colName={colName}
           dragTarget={dragTarget}
+          dragItem={dragItem}
           onDragTargetUpdate={onDragTargetUpdate}
+          onDragItemUpdate={onDragItemUpdate}
         />
       ))}
     </div>

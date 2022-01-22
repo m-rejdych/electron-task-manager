@@ -1,6 +1,5 @@
-import Columns from './Columns';
+import DragTarget from './DragTarget';
 
-export default interface DragItem {
+export default interface DragItem extends DragTarget {
   id: string;
-  colName: keyof Columns;
 }

@@ -9,14 +9,21 @@ import React, {
 import type Columns from '../types/Columns';
 import type ItemType from '../types/Item';
 import type DragTarget from '../types/DragTarget';
+import type DragItem from '../types/DragItem';
 import classes from '../styles.module';
-import { extractOffsets, checkIsAboveCursor } from '../util/positionCheckers';
+import {
+  extractOffsets,
+  checkIsBelowCursor,
+  checkIsAboveCursor,
+} from '../util/positionCheckers';
 
 interface Props extends ItemType {
   index: number;
   colName: keyof Columns;
   dragTarget: DragTarget | null;
   onDragTargetUpdate: Dispatch<SetStateAction<DragTarget | null>>;
+  dragItem: DragItem | null;
+  onDragItemUpdate: Dispatch<SetStateAction<DragItem | null>>;
 }
 
 const Item: React.FC<Props> = ({
@@ -25,23 +32,42 @@ const Item: React.FC<Props> = ({
   name,
   id,
   dragTarget,
+  dragItem,
   onDragTargetUpdate,
+  onDragItemUpdate,
 }) => {
-  const [isDragItem, setIsDragItem] = useState(false);
   const [isDragTargetBelow, setIsDragTargetBelow] = useState(false);
+  const [isDragTargetAbove, setIsDragTargetAbove] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const isDragItem = dragItem?.id === id;
 
   useEffect(() => {
     const listener = (e: MouseEvent): void => {
-      if (!ref.current || !dragTarget || isDragItem) return;
+      if (!ref.current || !dragTarget || isDragItem || !dragItem) return;
 
-      setIsDragTargetBelow(checkIsAboveCursor(e, ref));
+      const {
+        offsets: { offsetLeft, offsetWidth },
+      } = dragItem;
+
+      const isSameCol =
+        offsetLeft === ref.current.offsetLeft && offsetWidth === offsetWidth;
+      const isBelow = checkIsBelowCursor(e, ref, { isSameCol, dragItem });
+
+      setIsDragTargetBelow(isBelow);
+
+      if (isSameCol && !isBelow) {
+        setIsDragTargetAbove(
+          checkIsAboveCursor(e, ref, { isSameCol, dragItem }),
+        );
+      }
     };
 
     if (dragTarget) {
       window.addEventListener('drag', listener);
     } else {
       setIsDragTargetBelow(false);
+      setIsDragTargetAbove(false);
     }
 
     return () => {
@@ -52,11 +78,7 @@ const Item: React.FC<Props> = ({
   const handleDragStart = (e: React.DragEvent, id: string): void => {
     e.dataTransfer.setData('id', id);
     e.dataTransfer.setData('colName', colName);
-    setIsDragItem(true);
-  };
-
-  const handleDragEnd = (): void => {
-    setIsDragItem(false);
+    onDragItemUpdate({ index, offsets: extractOffsets(ref)!, id });
   };
 
   const handleDragEnter = (): void => {
@@ -70,12 +92,13 @@ const Item: React.FC<Props> = ({
       draggable
       ref={ref}
       onDragStart={(e) => handleDragStart(e, id)}
-      onDragEnd={handleDragEnd}
       onDragEnter={handleDragEnter}
-      className={`border border-gray-400 rounded-lg h-20 m-4 shadow shadow-black bg-slate-900 p-2 cursor-move cpu ${
-        dragTarget ? 'transition-transform' : ''
-      } ${isDragItem ? classes.hide : ''} 
-      ${isDragTargetBelow ? 'translate-y-12' : ''}`}
+      className={`border border-gray-400 rounded-lg h-20 m-4 shadow shadow-black bg-slate-900 p-2 cursor-move cpu${
+        dragTarget ? ' transition-transform' : ''
+      }${isDragItem ? ` ${classes.hide}` : ''}
+      ${isDragTargetBelow ? ' translate-y-12' : ''} ${
+        isDragTargetAbove ? ' -translate-y-12' : ''
+      }`}
     >
       {name}
     </div>
