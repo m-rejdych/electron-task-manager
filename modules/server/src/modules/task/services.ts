@@ -1,26 +1,16 @@
-import { Handler } from 'express';
 import { getRepository } from 'typeorm';
 
 import Task from './entity';
+import { CreateTaskDto } from './dto';
 
-interface CreateTaskDto {
-  name: string;
-}
+export const createTask = async ({ name }: CreateTaskDto): Promise<Task> => {
+  const taskRepository = getRepository(Task);
 
-export const createTask: Handler = async (req, res, next) => {
-  try {
-    const taskRepository = getRepository(Task);
+  const task = taskRepository.create({
+    name,
+  });
 
-    const { name } = req.body as CreateTaskDto;
+  await taskRepository.save(task);
 
-    const task = taskRepository.create({
-      name,
-    });
-
-    await taskRepository.save(task);
-
-    res.status(201).json(task);
-  } catch (error) {
-    next(error);
-  }
+  return task;
 };

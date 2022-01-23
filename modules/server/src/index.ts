@@ -4,7 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { createConnection } from 'typeorm';
 
-import ExtendedError from './types/ExtendedError';
+import type ExtendedError from './types/ExtendedError';
 import taskRoutes from './modules/task/routes';
 import entities from './entities';
 
@@ -35,7 +35,10 @@ const main = async () => {
     app.use(
       (error: ExtendedError, _: Request, res: Response, ___: NextFunction) => {
         console.log(error);
-        res.status(error.status ?? 500).json(error);
+        const { status, message } = error;
+        res
+          .status(error.status ?? 500)
+          .json({ status: status ?? 500, message });
       },
     );
 

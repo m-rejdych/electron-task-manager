@@ -1,9 +1,15 @@
 import { Router } from 'express';
 
-import { createTask } from './services';
+import { CreateTaskDto } from './dto';
+import validationMiddleware from '../../middleware/validationMiddleware';
+import { createTaskHandler } from './handlers';
 
 const router = Router();
 
-router.post('/create-task', createTask);
+router.post(
+  '/create-task',
+  validationMiddleware(CreateTaskDto),
+  createTaskHandler,
+);
 
 export default router;
