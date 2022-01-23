@@ -9,6 +9,7 @@ import {
 
 import Board from '../board/entity';
 import User from '../user/entity';
+import ColumnEntity from '../column/entity';
 
 @Entity()
 class Task {
@@ -32,6 +33,9 @@ class Task {
 
   @ManyToOne(() => User, (user) => user.assignedTasks, { cascade: true })
   assignedTo?: User;
+
+  @ManyToOne(() => ColumnEntity, (column) => column.tasks, { cascade: true })
+  column?: ColumnEntity;
 }
 
 export default Task;
