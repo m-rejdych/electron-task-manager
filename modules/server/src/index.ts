@@ -2,10 +2,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { createConnection } from 'typeorm';
 
 import type ExtendedError from './types/ExtendedError';
 import taskRoutes from './modules/task/routes';
+import authRoutes from './modules/auth/routes';
 import entities from './entities';
 
 dotenv.config();
@@ -27,17 +29,19 @@ const main = async () => {
     });
 
     app.use(helmet());
-    app.use(cors());
+    app.use(cors({ credentials: true }));
+    app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
     app.use('/task', taskRoutes);
+    app.use('/auth', authRoutes);
     app.use(
       (error: ExtendedError, _: Request, res: Response, ___: NextFunction) => {
         console.log(error);
         const { status, message } = error;
         res
-          .status(error.status ?? 500)
+          .status(status ?? 500)
           .json({ status: status ?? 500, message });
       },
     );

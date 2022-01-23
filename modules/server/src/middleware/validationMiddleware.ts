@@ -1,12 +1,12 @@
-import type { RequestHandler } from 'express';
 import { validate } from 'class-validator';
 import { plainToInstance, ClassConstructor } from 'class-transformer';
 
 import createError from '../util/createError';
+import type JwtAuthHandler from '../types/JwtAuthHandler';
 
 type Validator = <T extends object>(
   dto: ClassConstructor<T>,
-) => RequestHandler<{}, null, T>;
+) => JwtAuthHandler<{}, null, T>;
 
 const validationMiddleware: Validator = (dto) => async (req, _, next) => {
   try {
@@ -21,8 +21,12 @@ const validationMiddleware: Validator = (dto) => async (req, _, next) => {
     if (errors.length) {
       console.log(errors);
       const message = errors.reduce(
-        (str, { constraints }) =>
-          `${str}${constraints ? Object.values(constraints).join(' ') : ''}`,
+        (str, { constraints }, index) =>
+          `${str}${
+            constraints
+              ? `${index ? ' ' : ''}${Object.values(constraints).join(' ')}`
+              : ''
+          }`,
         '',
       );
       createError(400, message);
