@@ -13,7 +13,8 @@ const validationMiddleware: Validator = (dto) => async (req, _, next) => {
     const validateClass = plainToInstance(dto, req.body);
 
     if (!validateClass) {
-      createError(400, 'Request body could not be parsed.');
+      const error = createError(400, 'Request body could not be parsed.');
+      throw error;
     }
 
     const errors = await validate(validateClass);
@@ -29,7 +30,8 @@ const validationMiddleware: Validator = (dto) => async (req, _, next) => {
           }`,
         '',
       );
-      createError(400, message);
+      const error = createError(400, message);
+      throw error;
     }
 
     next();

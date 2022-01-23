@@ -14,3 +14,12 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Username can not be empty.' })
   username: string;
 }
+
+export class LoginDto {
+  @IsEmail({ message: 'Invalid email.' })
+  email: string;
+
+  @IsString({ message: 'Password must be a string.' })
+  @IsNotEmpty({ message: 'Password can not be empty.' })
+  password: string;
+}

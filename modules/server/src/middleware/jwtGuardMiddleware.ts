@@ -10,12 +10,16 @@ dotenv.config();
 const jwtGuardMiddleware: JwtAuthHandler = (req, _, next): void => {
   const jwt: string | undefined = req.cookies.jwt;
 
-  if (!jwt) createError(401, 'User is not logged in.');
+  if (!jwt) {
+    const error = createError(401, 'User is not logged in.');
+    throw error;
+  }
 
   verify(jwt as string, process.env.JWT_SECRET as string, (err, data) => {
     if (err) {
       console.log(err);
-      createError(401, 'Invalid token');
+      const error = createError(401, 'Invalid token');
+      throw error;
     }
 
     req.user = (data as JwtUserPayload).userId;

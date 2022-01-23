@@ -1,8 +1,13 @@
 import { RequestHandler } from 'express';
+import dotenv from 'dotenv';
 
-import { register } from './services';
-import type { RegisterDto } from './dto';
+import { register, login } from './services';
+import type { RegisterDto, LoginDto } from './dto';
 import type User from '../user/entity';
+
+dotenv.config();
+
+const __prod__ = process.env.NODE_ENV === 'production';
 
 export const registerHandler: RequestHandler<
   {},
@@ -15,9 +20,36 @@ export const registerHandler: RequestHandler<
       jwt,
     } = await register(req.body);
 
-    res.cookie('jwt', jwt, { httpOnly: true, maxAge: 3600000 });
+    res.cookie('jwt', jwt, {
+      httpOnly: true,
+      maxAge: 3600000,
+      secure: __prod__,
+    });
 
     res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const loginHandler: RequestHandler<{}, {}, LoginDto> = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const {
+      user: { password, ...user },
+      jwt,
+    } = await login(req.body);
+
+    res.cookie('jwt', jwt, {
+      httpOnly: true,
+      maxAge: 3600000,
+      secure: __prod__,
+    });
+
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

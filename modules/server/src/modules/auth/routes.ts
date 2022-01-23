@@ -1,13 +1,13 @@
 import { Router } from 'express';
 
-import { registerHandler } from './handlers';
-import { RegisterDto } from './dto';
+import { registerHandler, loginHandler } from './handlers';
+import { RegisterDto, LoginDto } from './dto';
 import validationMiddleware from '../../middleware/validationMiddleware';
 
 const router = Router();
 
 router.post('/register', validationMiddleware(RegisterDto), registerHandler);
 
-router.put('/login', () => {});
+router.put('/login', validationMiddleware(LoginDto), loginHandler);
 
 export default router;
