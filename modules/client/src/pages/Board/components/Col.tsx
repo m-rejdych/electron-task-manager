@@ -5,7 +5,7 @@ import type ItemType from '../types/Item';
 import type Columns from '../types/Columns';
 import type DragTarget from '../types/DragTarget';
 import type DragItem from '../types/DragItem';
-import RippleEffect from '../../RippleEffect';
+import RippleEffect from '../../../components/RippleEffect';
 import Item from './Item';
 import NewItemInput from './NewItemInput';
 
