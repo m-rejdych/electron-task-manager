@@ -1,9 +1,11 @@
-import React, { type FC, type HTMLInputTypeAttribute, useState } from 'react';
+import React, { type FC, type HTMLInputTypeAttribute } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Form, Formik } from 'formik';
 
 import AuthField from './AuthField';
 import Routes from '../../../types/Routes';
+import { register, login } from '../../../store/ducks/user/actions';
 
 export interface Field {
   type: HTMLInputTypeAttribute;
@@ -11,12 +13,6 @@ export interface Field {
   name: string;
   validate: (value: string) => string | undefined;
 }
-
-const INITIAL_VALUES = {
-  email: '',
-  username: '',
-  password: '',
-};
 
 const LOGIN_FIELDS: [Field, Field] = [
   {
@@ -36,6 +32,23 @@ const LOGIN_FIELDS: [Field, Field] = [
     },
   },
   {
+    type: 'password',
+    name: 'password',
+    placeholder: 'Password',
+    validate: (value) => {
+      let error;
+      if (!/^(?=.*\d).{4,8}$/.test(value)) {
+        error =
+          'Password needs to be at least 4 characters long and contain at least 1 digit.';
+      }
+      return error;
+    },
+  },
+];
+
+const REGISTER_FIELDS: [Field, Field, Field] = [
+  LOGIN_FIELDS[0],
+  {
     type: 'text',
     name: 'username',
     placeholder: 'Username',
@@ -47,43 +60,42 @@ const LOGIN_FIELDS: [Field, Field] = [
       return error;
     },
   },
+  LOGIN_FIELDS[1],
 ];
 
-const REGISTER_FIELDS: [Field, Field, Field] = [
-  ...LOGIN_FIELDS,
-  {
-    type: 'password',
-    name: 'password',
-    placeholder: 'Password',
-    validate: (value) => {
-      let error;
+const LOGIN_INITIAL_VALUES = {
+  email: '',
+  password: '',
+};
 
-      if (!/^(?=.*\d).{4,8}$/.test(value)) {
-        error =
-          'Password needs to be at least 4 characters long and contain at least 1 digit.';
-      }
-
-      return error;
-    },
-  },
-];
+const REGISTER_INITIAL_VALUES = {
+  ...LOGIN_INITIAL_VALUES,
+  username: '',
+};
 
 const AuthForm: FC = () => {
-  const [isLinkHovered, setIsLinkHovered] = useState(false);
   const { pathname } = useLocation();
+  const dispatch = useDispatch();
 
   const isSigningUp = pathname === Routes.Register;
 
-  const handleMouseEnter = (): void => {
-    setIsLinkHovered(true);
-  };
-
-  const handleMouseLeave = (): void => {
-    setIsLinkHovered(false);
+  const handleSubmit = (
+    values: typeof LOGIN_INITIAL_VALUES | typeof REGISTER_INITIAL_VALUES,
+  ): void => {
+    if (isSigningUp) {
+      dispatch(register(values as typeof REGISTER_INITIAL_VALUES));
+    } else {
+      dispatch(login(values as typeof LOGIN_INITIAL_VALUES));
+    }
   };
 
   return (
-    <Formik onSubmit={() => {}} initialValues={INITIAL_VALUES}>
+    <Formik
+      onSubmit={handleSubmit}
+      initialValues={
+        isSigningUp ? REGISTER_INITIAL_VALUES : LOGIN_INITIAL_VALUES
+      }
+    >
       {({ handleReset }) => (
         <Form className="w-full">
           <div>
@@ -98,9 +110,7 @@ const AuthForm: FC = () => {
             <p className="text-xs">
               {'or '}
               <span
-                className={`text-red-400${isLinkHovered ? ' underline' : ''}`}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                className="text-red-400 hover:underline"
                 onClick={handleReset}
               >
                 <Link to={isSigningUp ? Routes.Login : Routes.Register}>

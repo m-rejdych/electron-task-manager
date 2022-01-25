@@ -29,7 +29,7 @@ const main = async (): Promise<void> => {
     });
 
     app.use(helmet());
-    app.use(cors({ credentials: true }));
+    app.use(cors({ credentials: true, origin: process.env.CLIENT_URI }));
     app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));

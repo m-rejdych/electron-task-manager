@@ -1,6 +1,8 @@
 import { Reducer } from 'redux';
+
 import type { State } from './types';
 import type PayloadAction from '../../types/PayloadAction';
+import { Actions } from './actions';
 
 const initialState: State = {
   user: null,
@@ -10,9 +12,16 @@ const initialState: State = {
 
 const reducer: Reducer<State, PayloadAction> = (
   state = initialState,
-  { type },
+  { type, payload },
 ) => {
   switch (type) {
+    case Actions.Register:
+    case Actions.Login:
+      return { ...state, loading: true };
+    case Actions.SetUser:
+      return { ...state, loading: false, error: null, user: payload };
+    case Actions.SetError:
+      return { ...state, loading: false, error: payload };
     default:
       return state;
   }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import Col from './components/Col';
 import type Columns from './types/Columns';
@@ -22,6 +23,12 @@ const Board: React.FC = () => {
   });
   const [dragTarget, setDragTarget] = useState<null | DragTarget>(null);
   const [dragItem, setDragItem] = useState<null | DragItem>(null);
+
+  useEffect(() => {
+    axios.post(`${process.env.API_URI}/task/create-task`, {
+      name: 'poopga',
+    }, { withCredentials: true });
+  }, []);
 
   return (
     <div className="flex flex-1 h-[calc(100vh-2rem)]">

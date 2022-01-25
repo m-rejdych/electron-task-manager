@@ -4,12 +4,12 @@ import { useField } from 'formik';
 import Input from '../../../components/Input';
 import type { Field } from './AuthForm';
 
-const AuthField: FC<Field> = ({ placeholder, ...rest }) => {
-  const [field, { touched, error }] = useField(rest);
+const AuthField: FC<Field> = ({ placeholder, type, ...rest }) => {
+  const [field, { touched, error }] = useField({ type, ...rest });
 
   return (
     <Input
-      inputProps={{ ...field, placeholder, className: 'w-full' }}
+      inputProps={{ ...field, placeholder, type, className: 'w-full' }}
       containerProps={{
         className: `mb-6${error && touched ? ' last:mb-12' : ''} w-full`,
       }}

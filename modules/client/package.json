@@ -15,6 +15,7 @@
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.8",
     "@babel/preset-react": "^7.16.7",
+    "@types/axios": "^0.14.0",
     "@types/electron": "^1.6.10",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
@@ -42,6 +43,10 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/runtime": "^7.16.7",
+    "axios": "^0.21.4",
+    "dotenv-webpack": "^7.0.3",
     "formik": "^2.2.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
