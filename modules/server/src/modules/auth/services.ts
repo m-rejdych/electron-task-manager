@@ -70,7 +70,6 @@ export const login = async ({
   }
 
   const jwt = sign({ userId: user.id }, process.env.JWT_SECRET as string);
-  console.log(user);
 
   return {
     user,

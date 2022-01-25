@@ -12,16 +12,16 @@ import entities from './entities';
 
 dotenv.config();
 
-const main = async () => {
+const main = async (): Promise<void> => {
   try {
     const app = express();
 
     await createConnection({
-      username: process.env.DB_USERNAME as string,
+      username: process.env.DB_USERNAME,
       port: parseInt(process.env.DB_PORT as string),
-      database: process.env.DB_NAME as string,
-      password: process.env.DB_PASSWORD as string,
-      host: process.env.DB_HOST as string,
+      database: process.env.DB_NAME,
+      password: process.env.DB_PASSWORD,
+      host: process.env.DB_HOST,
       synchronize: true,
       logging: true,
       type: 'postgres',

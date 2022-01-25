@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import Input from '../../../components/Input';
+
 interface Props {
   onBlur: () => void;
   onCreate: (value: string) => void;
@@ -19,12 +21,15 @@ const NewItemInput: React.FC<Props> = ({ onCreate, onBlur }) => {
   };
 
   return (
-    <input
-      autoFocus
-      className="rounded-md w-full outline-none bg-gray-100 bg-opacity-10 py-2.5 px-2"
-      onBlur={onBlur}
-      onChange={handleChange}
-      onKeyPress={handleKeyPress}
+    <Input
+      inputProps={{
+        autoFocus: true,
+        className:
+          'rounded-md w-full outline-none bg-gray-100 bg-opacity-10 py-2.5 px-2',
+        onChange: handleChange,
+        onKeyPress: handleKeyPress,
+        onBlur,
+      }}
     />
   );
 };
