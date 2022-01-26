@@ -34,7 +34,7 @@ class Task {
   @ManyToOne(() => User, (user) => user.assignedTasks, { cascade: true })
   assignedTo?: User;
 
-  @ManyToOne(() => ColumnEntity, (column) => column.tasks, { cascade: true })
+  @ManyToOne(() => ColumnEntity)
   column?: ColumnEntity;
 }
 

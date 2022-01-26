@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Board from '../../pages/Board';
+import Boards from '../../pages/Boards';
 import Auth from '../../pages/Auth';
 import RouteTypes from '../../types/Routes';
 import type RootState from '../../store/types/RootState';
@@ -12,7 +13,9 @@ const RoutesComponent: FC = () => {
 
   return userId ? (
     <Routes>
-      <Route path={RouteTypes.Boards} element={<Board />} />
+      <Route path={RouteTypes.Boards} element={<Boards />}>
+        <Route path=":id" element={<Board />} />
+      </Route>
       <Route path="*" element={<Navigate to={RouteTypes.Boards} />} />
     </Routes>
   ) : (

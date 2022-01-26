@@ -9,6 +9,7 @@ import type ExtendedError from './types/ExtendedError';
 import taskRoutes from './modules/task/routes';
 import authRoutes from './modules/auth/routes';
 import userRoutes from './modules/user/routes';
+import boardRoutes from './modules/board/routes';
 import entities from './entities';
 
 dotenv.config();
@@ -38,6 +39,7 @@ const main = async (): Promise<void> => {
     app.use('/task', taskRoutes);
     app.use('/auth', authRoutes);
     app.use('/user', userRoutes);
+    app.use('/board', boardRoutes);
     app.use(
       (error: ExtendedError, _: Request, res: Response, ___: NextFunction) => {
         console.log(error);
