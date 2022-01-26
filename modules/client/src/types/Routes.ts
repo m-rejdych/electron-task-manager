@@ -1,5 +1,6 @@
 enum Routes {
   Root = '/',
+  Boards = '/boards',
   Login = '/login',
   Register = '/register',
 }

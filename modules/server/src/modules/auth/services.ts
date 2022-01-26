@@ -1,28 +1,16 @@
 import { getRepository } from 'typeorm';
 import { hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { FindOneOptions } from 'typeorm';
+import { sign, verify } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 import type { RegisterDto, LoginDto } from './dto';
 import type { AuthService } from './interfaces';
+import type JwtUserPayload from '../../types/JwtUserPayload';
+import { findOne } from '../user/services';
 import User from '../user/entity';
 import createError from '../../util/createError';
 
 dotenv.config();
-
-const findOne = async (
-  optionsOrId: number | FindOneOptions,
-  options?: FindOneOptions,
-): Promise<User | null> => {
-  const repository = getRepository(User);
-
-  const user = await (typeof optionsOrId === 'number'
-    ? repository.findOne(optionsOrId, options)
-    : repository.findOne(optionsOrId));
-
-  return user || null;
-};
 
 export const register = async ({
   password,
@@ -69,10 +57,39 @@ export const login = async ({
     throw error;
   }
 
-  const jwt = sign({ userId: user.id }, process.env.JWT_SECRET as string);
+  const jwt = sign({ userId: user.id }, process.env.JWT_SECRET as string, {
+    expiresIn: '1h',
+  });
 
   return {
     user,
     jwt,
   };
+};
+
+export const autologin = async (cookie: {
+  jwt?: string;
+}): Promise<User | null> => {
+  const { jwt } = cookie;
+
+  if (!jwt) {
+    return null;
+  }
+
+  try {
+    const jwtPayload = verify(
+      jwt,
+      process.env.JWT_SECRET as string,
+    ) as JwtUserPayload;
+
+    const user = await findOne(jwtPayload.userId);
+
+    if (!user) {
+      throw new Error();
+    }
+
+    return user;
+  } catch {
+    return null;
+  }
 };

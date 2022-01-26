@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import dotenv from 'dotenv';
 
-import { register, login } from './services';
+import { register, login, autologin } from './services';
 import type { RegisterDto, LoginDto } from './dto';
 import type User from '../user/entity';
 
@@ -48,6 +48,16 @@ export const loginHandler: RequestHandler<{}, {}, LoginDto> = async (
       maxAge: 3600000,
       secure: __prod__,
     });
+
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const autologinHandler: RequestHandler<{}, User | null> = async (req, res, next) => {
+  try {
+    const user = await autologin(req.cookies);
 
     res.status(200).json(user);
   } catch (error) {

@@ -12,8 +12,8 @@ const RoutesComponent: FC = () => {
 
   return userId ? (
     <Routes>
-      <Route path={RouteTypes.Root} element={<Board />} />
-      <Route path="*" element={<Navigate to={RouteTypes.Root} />} />
+      <Route path={RouteTypes.Boards} element={<Board />} />
+      <Route path="*" element={<Navigate to={RouteTypes.Boards} />} />
     </Routes>
   ) : (
     <Routes>
