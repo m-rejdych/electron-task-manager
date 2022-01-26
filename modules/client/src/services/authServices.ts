@@ -14,3 +14,6 @@ export const loginService = async (
   data: LoginPayload,
 ): Promise<AxiosResponse<User>> =>
   axios.put(`${AUTH_API}/login`, data, { withCredentials: true });
+
+export const autologinService = async (): Promise<AxiosResponse<User | null>> =>
+  axios.get(`${AUTH_API}/autologin`, { withCredentials: true });

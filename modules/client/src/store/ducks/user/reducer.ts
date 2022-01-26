@@ -17,6 +17,7 @@ const reducer: Reducer<State, PayloadAction> = (
   switch (type) {
     case Actions.Register:
     case Actions.Login:
+    case Actions.Autologin:
       return { ...state, loading: true };
     case Actions.SetUser:
       return { ...state, loading: false, error: null, user: payload };
