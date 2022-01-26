@@ -3,7 +3,7 @@ import axios, { type AxiosResponse } from 'axios';
 import { RegisterPayload, LoginPayload } from '../store/ducks/user/types';
 import type User from '../types/User';
 
-const AUTH_API = `${process.env.API_URI}/auth`;
+const AUTH_API = `${process.env.API_URI}/auth` as const;
 
 export const registerService = async (
   data: RegisterPayload,
