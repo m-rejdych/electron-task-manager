@@ -4,10 +4,13 @@ import Task from './entity';
 import createError from '../../util/createError';
 import { findOne as findOneUser } from '../user/services';
 import { findByName } from '../columnType/services';
-import { findOne as findOneBoard } from '../board/service';
+import { validateMember, findOne as findOneBoard } from '../board/service';
 import type { CreateTaskDto } from './dto';
 
-export const createTask = async (userId: number, { name, column, boardId }: CreateTaskDto): Promise<Task> => {
+export const createTask = async (
+  userId: number,
+  { name, column, boardId }: CreateTaskDto,
+): Promise<Task> => {
   const taskRepository = getRepository(Task);
 
   const columnType = await findByName(column);
@@ -36,4 +39,29 @@ export const createTask = async (userId: number, { name, column, boardId }: Crea
   await taskRepository.save(task);
 
   return task;
+};
+
+export const getByBoardId = async (
+  userId: number,
+  boardId: number,
+): Promise<Task[]> => {
+  const isValidUser = await validateMember(userId, boardId);
+
+  if (!isValidUser) {
+    const error = createError(
+      403,
+      'You need to be a member of board to see the tasks.',
+    );
+    throw error;
+  }
+
+  const repository = getRepository(Task);
+
+  const tasks = await repository
+    .createQueryBuilder('task')
+    .leftJoin('task.board', 'board')
+    .where('board.id = :boardId', { boardId })
+    .getMany();
+
+  return tasks;
 };

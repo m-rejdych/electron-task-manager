@@ -52,3 +52,19 @@ export const getBoardsByUserId = async (userId: number): Promise<Board[]> => {
 
   return boards;
 };
+
+export const validateMember = async (
+  userId: number,
+  boardId: number,
+): Promise<boolean> => {
+  const repository = getRepository(Board);
+
+  const board = await repository
+    .createQueryBuilder('board')
+    .leftJoin('board.user', 'user')
+    .where('board.id = :boardId', { boardId })
+    .andWhere('user.id = :userId', { userId })
+    .getOne();
+
+  return !!board;
+};
