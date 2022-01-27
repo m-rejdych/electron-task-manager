@@ -1,10 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-enum ColumnName {
-  NotStarted = 'notStarted',
-  Doing = 'doing',
-  Done = 'done',
-}
+import type { ColumnName } from './types';
 
 @Entity()
 class ColumnType {

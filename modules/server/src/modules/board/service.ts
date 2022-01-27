@@ -1,15 +1,28 @@
-import { getRepository } from 'typeorm';
+import { getRepository, FindOneOptions } from 'typeorm';
 
 import type { CreateBoardDto } from './dto';
-import { findOne } from '../user/services';
+import { findOne as findOneUser } from '../user/services';
 import Board from './entity';
 import createError from '../../util/createError';
+
+export const findOne = async (
+  optionsOrId: number | FindOneOptions,
+  options?: FindOneOptions,
+): Promise<Board | null> => {
+  const repository = getRepository(Board);
+
+  const board = await (typeof optionsOrId === 'number'
+    ? repository.findOne(optionsOrId, options)
+    : repository.findOne(optionsOrId));
+
+  return board || null;
+};
 
 export const createBoard = async (
   userId: number,
   { name }: CreateBoardDto,
 ): Promise<Board> => {
-  const user = await findOne(userId);
+  const user = await findOneUser(userId);
 
   if (!user) {
     const error = createError(404, 'User not found.');
