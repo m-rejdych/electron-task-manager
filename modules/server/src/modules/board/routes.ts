@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { CreateBoardDto } from './dto';
-import { createBoardHandler } from './handlers';
+import { createBoardHandler, getBoardsByUserIdHandler } from './handlers';
 import jwtGuardMiddleware from '../../middleware/jwtGuardMiddleware';
 import validationMiddleware from '../../middleware/validationMiddleware';
 
@@ -13,5 +13,7 @@ router.post(
   validationMiddleware(CreateBoardDto),
   createBoardHandler,
 );
+
+router.get('/get-boards', jwtGuardMiddleware, getBoardsByUserIdHandler);
 
 export default router;

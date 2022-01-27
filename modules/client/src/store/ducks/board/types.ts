@@ -1,7 +1,7 @@
 import type Board from '../../../types/Board';
 
 export interface State {
-  board: Board | null;
+  boards: Board[];
   loading: boolean;
   error: string | null;
 }

@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/renderer.tsx',
   output: {
     path: path.resolve(__dirname, 'build'),
-    publicPath: 'auto',
+    publicPath: '/',
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
