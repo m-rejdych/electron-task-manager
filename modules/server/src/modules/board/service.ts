@@ -61,7 +61,7 @@ export const validateMember = async (
 
   const board = await repository
     .createQueryBuilder('board')
-    .leftJoin('board.user', 'user')
+    .leftJoin('board.users', 'user')
     .where('board.id = :boardId', { boardId })
     .andWhere('user.id = :userId', { userId })
     .getOne();

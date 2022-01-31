@@ -8,6 +8,7 @@ export const enum Actions {
   CreateTask = 'CREATE_TASK',
   AddTask = 'ADD_TASK',
   SetError = 'SET_ERROR',
+  Reset = 'RESET',
 }
 
 export const getTasks = createActionCreator<Actions.GetTasks, number>(
@@ -30,3 +31,5 @@ export const addTask = createActionCreator<Actions.AddTask, AddTaskPayload>(
 export const setError = createActionCreator<Actions.SetError, string | null>(
   Actions.SetError,
 );
+
+export const reset = createActionCreator<Actions.Reset, void>(Actions.Reset);

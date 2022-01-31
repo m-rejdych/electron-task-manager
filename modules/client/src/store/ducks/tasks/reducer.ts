@@ -33,6 +33,8 @@ const reducer: Reducer<State, PayloadAction> = (
       };
     case Actions.SetError:
       return { ...state, loading: false, error: payload };
+    case Actions.Reset:
+      return initialState;
     default:
       return state;
   }

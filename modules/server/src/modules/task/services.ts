@@ -54,13 +54,13 @@ export const getByBoardId = async (
     );
     throw error;
   }
-
   const repository = getRepository(Task);
 
   const tasks = await repository
     .createQueryBuilder('task')
     .leftJoin('task.board', 'board')
     .leftJoinAndSelect('task.column', 'column')
+    .leftJoinAndSelect('column.type', 'columnType')
     .where('board.id = :boardId', { boardId })
     .getMany();
 

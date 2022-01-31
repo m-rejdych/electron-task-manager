@@ -1,5 +1,5 @@
-import React, { type FC, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { type FC, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import Col from './components/Col';
@@ -8,6 +8,7 @@ import type Columns from './types/Columns';
 import type DragTarget from './types/DragTarget';
 import type DragItem from './types/DragItem';
 import type RootState from '../../store/types/RootState';
+import { reset, getTasks } from '../../store/ducks/tasks/actions';
 
 const Board: FC = () => {
   const [columns, setColumns] = useState<Columns>({
@@ -33,6 +34,15 @@ const Board: FC = () => {
       ? state.board.boards.find(({ id: boardId }) => boardId === parseInt(id))
       : null,
   );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getTasks(parseInt(id as string)));
+
+  return () => {
+    dispatch(reset());
+  }
+  }, [id]);
 
   const handleGoBack = (): void => {
     navigate(Routes.Boards);

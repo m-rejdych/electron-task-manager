@@ -1,6 +1,6 @@
 import Board from './Board';
 import User from './User';
-import ColumnType from './ColumnType';
+import Column from './Column';
 
 export default interface Task {
   id: number;
@@ -10,5 +10,5 @@ export default interface Task {
   board?: Board;
   creator?: User;
   assignedTo?: User;
-  column?: ColumnType;
+  column?: Column;
 }

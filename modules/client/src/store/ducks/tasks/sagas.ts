@@ -19,10 +19,10 @@ import {
 
 const parseTasks = (tasks: Task[]): Tasks => ({
   notStarted: tasks.filter(
-    ({ column }) => column?.name === ColumnNames.NotStarted,
+    ({ column }) => column?.type?.name === ColumnNames.NotStarted,
   ),
-  doing: tasks.filter(({ column }) => column?.name === ColumnNames.Doing),
-  done: tasks.filter(({ column }) => column?.name === ColumnNames.Done),
+  doing: tasks.filter(({ column }) => column?.type?.name === ColumnNames.Doing),
+  done: tasks.filter(({ column }) => column?.type?.name === ColumnNames.Done),
 });
 
 function* handleGetTasks({ payload }: ReturnType<typeof getTasks>) {
