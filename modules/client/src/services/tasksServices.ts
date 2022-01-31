@@ -5,7 +5,7 @@ import type Task from '../types/Task';
 
 const TASK_API = `${process.env.API_URI}/task` as const;
 
-export const getTasks = (boardId: number): Promise<AxiosResponse<Task[]>> =>
+export const getTasksService = (boardId: number): Promise<AxiosResponse<Task[]>> =>
   axios.get(`${TASK_API}/get-by-board-id?boardId=${boardId}`, {
     withCredentials: true,
   });

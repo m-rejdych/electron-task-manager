@@ -20,7 +20,7 @@ export const createTaskHandler: JwtAuthHandler<
 
 export const getByBoardIdHandler: JwtAuthHandler<
   {},
-  {},
+  Task[],
   {},
   { boardId?: string }
 > = async (req, res, next) => {

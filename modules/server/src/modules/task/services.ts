@@ -60,6 +60,7 @@ export const getByBoardId = async (
   const tasks = await repository
     .createQueryBuilder('task')
     .leftJoin('task.board', 'board')
+    .leftJoinAndSelect('task.column', 'column')
     .where('board.id = :boardId', { boardId })
     .getMany();
 

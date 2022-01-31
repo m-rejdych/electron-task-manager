@@ -21,6 +21,6 @@ export interface CreateTaskPayload {
 }
 
 export interface AddTaskPayload {
-  type: ColumnNames;
+  column: ColumnNames;
   task: Task;
 }
