@@ -1,8 +1,8 @@
 import type Task from './entity';
 import type JwtAuthHandler from '../../types/JwtAuthHandler';
-import type { CreateTaskDto } from './dto';
+import type { CreateTaskDto, UpdateTaskDto } from './dto';
 import createError from '../../util/createError';
-import { createTask, getByBoardId } from './services';
+import { createTask, updateTask, getByBoardId } from './services';
 
 export const createTaskHandler: JwtAuthHandler<
   {},
@@ -13,6 +13,20 @@ export const createTaskHandler: JwtAuthHandler<
     const task = await createTask(req.user as number, req.body);
 
     res.status(201).json(task);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateTaskHandler: JwtAuthHandler<
+  {},
+  Task,
+  UpdateTaskDto
+> = async (req, res, next) => {
+  try {
+    const task = await updateTask(req.user as number, req.body);
+
+    res.status(200).json(task);
   } catch (error) {
     next(error);
   }

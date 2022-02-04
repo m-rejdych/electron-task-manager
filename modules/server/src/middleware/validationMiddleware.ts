@@ -20,7 +20,6 @@ const validationMiddleware: Validator = (dto) => async (req, _, next) => {
     const errors = await validate(validateClass);
 
     if (errors.length) {
-      console.log(errors);
       const message = errors.reduce(
         (str, { constraints }, index) =>
           `${str}${
